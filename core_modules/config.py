@@ -1,7 +1,10 @@
 import os
+import secrets
+
 from dotenv import load_dotenv
 
 load_dotenv()
+
 
 class Config:
     # App
@@ -12,8 +15,10 @@ class Config:
     # Database
     DB_PATH = os.getenv("DB_PATH", "Data layer/vendors.db")
 
-    # Auth
-    SECRET_KEY = os.getenv("SECRET_KEY", "change_this_in_production_secret_key_2024")
+    # Auth — SECRET_KEY must come from the environment in production.
+    # For local demo runs an ephemeral key is generated per process,
+    # which invalidates JWTs on restart (acceptable for a demo).
+    SECRET_KEY = os.getenv("SECRET_KEY") or secrets.token_hex(32)
     JWT_EXPIRY_HOURS = int(os.getenv("JWT_EXPIRY_HOURS", "24"))
     SESSION_TIMEOUT_MINUTES = int(os.getenv("SESSION_TIMEOUT_MINUTES", "60"))
     DEMO_ADMIN_USERNAME = os.getenv("DEMO_ADMIN_USERNAME", "admin")
