@@ -7,7 +7,13 @@ import textwrap
 import warnings
 from typing import Optional
 import pandas as pd
-import anthropic
+
+# Anthropic SDK is optional — only needed for AI_MODE=real.
+# Mock and Ollama modes work without it.
+try:
+    import anthropic
+except ImportError:
+    anthropic = None
 
 warnings.filterwarnings(
     "ignore",
@@ -67,7 +73,13 @@ class AnthropicProvider(AIProvider):
         )
         return message.content[0].text.strip()
 
-def _get_client() -> anthropic.Anthropic:
+def _get_client() -> "anthropic.Anthropic":
+    if anthropic is None:
+        raise EnvironmentError(
+            "The 'anthropic' package is not installed. "
+            "Run: pip install anthropic"
+        )
+
     api_key = os.getenv("ANTHROPIC_API_KEY")
 
     if not api_key:
@@ -79,7 +91,7 @@ def _get_client() -> anthropic.Anthropic:
 
 
 def _has_anthropic_key() -> bool:
-    return bool(os.getenv("ANTHROPIC_API_KEY"))
+    return anthropic is not None and bool(os.getenv("ANTHROPIC_API_KEY"))
 
 
 def _call_ollama(system: str, user: str) -> str:

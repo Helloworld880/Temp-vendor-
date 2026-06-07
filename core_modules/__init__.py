@@ -5,7 +5,6 @@ from .database import DatabaseManager
 from .analytics import AnalyticsEngine
 from .email_service import EmailService
 from .config import Config
-from .api import APIManager
 
 # IMPORTANT:
 # Do NOT import report_generator here.
